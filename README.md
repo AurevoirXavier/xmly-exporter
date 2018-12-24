@@ -24,7 +24,7 @@
 
 ![screenshot](demo.png)
 
-#### Issue
+## Issue
 
 One of these font(path) are needed.
 
