@@ -26,7 +26,7 @@
 
 ## Issue
 
-One of these fonts(path) are needed.
+One of these fonts(path) is needed.
 
 ```rust
 if cfg!(target_os = "windows") {
