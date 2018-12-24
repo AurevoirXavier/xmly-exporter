@@ -6,7 +6,8 @@
    - `git clone https://github.com/AurevoirXavier/xmly-exporter.git`
    - `cargo build --release` (rust version 1.33.0 nightly)
 2.  Download relase
-   - [None](#)
+   - [OS X Mojave (10.14.2 18C54)](https://github.com/AurevoirXavier/xmly-exporter/releases/download/1.0/xmly-exporter)
+   - [Windows](#) Not yet
 
 #### Usage
 
