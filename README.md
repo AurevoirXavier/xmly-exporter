@@ -1,6 +1,6 @@
 ## Intro
 
-*[xmly](https://www.ximalaya.com) crawler in pure Rust*
+**[xmly](https://www.ximalaya.com) crawler in pure Rust**
 
 #### Installation
 
