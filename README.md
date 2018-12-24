@@ -19,3 +19,7 @@
    - **Click to copy download link**: Just as it told (also copy the title of the track)
    - **Track id**, **Album**, **Album id**: Click to copy
 6. Text: Category, Nickname, Duration, Plays, Comments, Shares, Likes
+
+#### Screenshot
+
+![screenshot](demo.png)
