@@ -8,6 +8,16 @@ use std::{
 // --- external ---
 use conrod::backend::glium::glium::{self, Surface, glutin};
 
+fn copy_info(button_color: &mut conrod::color::Color, info: &str) {
+    // --- external ---
+    use clipboard::ClipboardProvider;
+    use clipboard::ClipboardContext;
+
+    *button_color = conrod::color::rgb(rand::random(), rand::random(), rand::random());
+    let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
+    ctx.set_contents(info.to_owned()).unwrap();
+}
+
 fn load_track_cover(display: &glium::Display, path: &Path) -> glium::texture::Texture2d {
     let rgba_image = image::open(&path).unwrap().to_rgba();
     let image_dimensions = rgba_image.dimensions();
@@ -76,7 +86,7 @@ pub fn display() {
     let mut image_map = conrod::image::Map::<glium::texture::Texture2d>::new();
 
     let album = Arc::new(Mutex::new(Album::new()));
-    let mut album_id = String::from("Album Id");
+    let mut album_track_url = String::from("Album or Track url");
     let mut track_selected = std::collections::HashSet::new();
 
     let temp_dir = tempfile::tempdir().unwrap();
@@ -88,7 +98,7 @@ pub fn display() {
             temp_dir.path(),
         ),
     );
-    let track_cover_id =  image_map.insert(track_cover_img);
+    let track_cover_id = image_map.insert(track_cover_img);
 
     let mut track_buttons_color = vec![conrod::color::WHITE; 4];
     let mut track_id = String::new();
@@ -142,12 +152,16 @@ pub fn display() {
                 .color(canvas_color)
                 .set(ids.canvas, ui);
 
+            widget::Text::new(&album_track_url)
+                .w_h(ui.win_w - 80., widget_height)
+                .mid_top_with_margin(margin - widget_height)
+                .font_size(font_size)
+                .color(color::WHITE)
+                .center_justify()
+                .set(ids.album_id_text, ui);
+
             {
                 {
-                    // --- external ---
-                    use clipboard::ClipboardProvider;
-                    use clipboard::ClipboardContext;
-
                     let widget_width = 200.;
 
                     widget::Image::new(track_cover_id)
@@ -169,9 +183,7 @@ pub fn display() {
                         .border(0.)
                         .set(ids.track_title_src_button, ui)
                         .was_clicked() {
-                        track_buttons_color[0] = color::rgb(rand::random(), rand::random(), rand::random());
-                        let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-                        ctx.set_contents(track_title_src.clone()).unwrap();
+                        copy_info(&mut track_buttons_color[0], &track_title_src);
                     }
 
                     if widget::Button::new()
@@ -186,9 +198,7 @@ pub fn display() {
                         .border(0.)
                         .set(ids.track_id_button, ui)
                         .was_clicked() {
-                        track_buttons_color[1] = color::rgb(rand::random(), rand::random(), rand::random());
-                        let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-                        ctx.set_contents(track_id.clone()).unwrap();
+                        copy_info(&mut track_buttons_color[1], &track_id);
                     }
 
                     if widget::Button::new()
@@ -203,9 +213,7 @@ pub fn display() {
                         .border(0.)
                         .set(ids.tracks_album_title_button, ui)
                         .was_clicked() {
-                        track_buttons_color[2] = color::rgb(rand::random(), rand::random(), rand::random());
-                        let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-                        ctx.set_contents(track_album_title.clone()).unwrap();
+                        copy_info(&mut track_buttons_color[2], &track_album_title);
                     }
 
                     if widget::Button::new()
@@ -220,15 +228,13 @@ pub fn display() {
                         .border(0.)
                         .set(ids.tracks_album_id_button, ui)
                         .was_clicked() {
-                        track_buttons_color[3] = color::rgb(rand::random(), rand::random(), rand::random());
-                        let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-                        ctx.set_contents(track_album_id.clone()).unwrap();
+                        copy_info(&mut track_buttons_color[3], &track_album_id);
                     }
 
                     {
                         widget::Text::new(&track_category)
                             .w_h(widget_width, widget_height)
-                            .mid_top_with_margin_on(ids.tracks_album_id_button, 30.)
+                            .mid_top_with_margin_on(ids.tracks_album_id_button, widget_height)
                             .font_size(font_size)
                             .color(color::WHITE)
                             .center_justify()
@@ -285,14 +291,6 @@ pub fn display() {
                 }
 
                 {
-                    widget::Text::new(&album_id)
-                        .w_h(widget_width, widget_height)
-                        .mid_bottom_with_margin_on(ids.get_album_detail_button, margin)
-                        .font_size(font_size)
-                        .color(color::WHITE)
-                        .center_justify()
-                        .set(ids.album_id_text, ui);
-
                     let button_color = color::LIGHT_BLUE;
                     let button_press_color = color::LIGHT_GREY;
                     let label_color = color::BLACK;
@@ -316,26 +314,41 @@ pub fn display() {
                         // --- external ---
                         use clipboard::ClipboardProvider;
                         use clipboard::ClipboardContext;
+                        // --- custom ---
+                        use crate::fetcher::track::Track;
 
                         let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
                         if let Ok(paste) = ctx.get_contents() {
-                            if paste.chars().all(|c| c.is_digit(10)) && album_id != paste {
-                                album_id = paste;
-                                album.lock().unwrap().set_id(&album_id).tracks.clear();
+                            if album_track_url != paste {
+                                if paste.starts_with("http") { album_track_url = paste; }
+                                let url_ids: Vec<&str> = album_track_url.split('/')
+                                    .filter(|s| !s.is_empty() && s.chars().all(|c| c.is_digit(10)))
+                                    .collect();
 
-                                let album = album.clone();
-                                spawn(move ||
-                                    for page_num in 1u32.. {
-                                        if !album
-                                            .lock()
-                                            .unwrap()
-                                            .next_page(page_num) {
-                                            break;
+                                if !url_ids.is_empty() {
+                                    album.lock().unwrap().set_id(url_ids[0]).tracks.clear();
+
+                                    match url_ids.len() {
+                                        0 => (),
+                                        1 => {
+                                            let album = album.clone();
+                                            spawn(move ||
+                                                for page_num in 1u32.. {
+                                                    if !album
+                                                        .lock()
+                                                        .unwrap()
+                                                        .next_page(page_num) {
+                                                        break;
+                                                    }
+
+                                                    sleep(Duration::from_millis(16));
+                                                }
+                                            );
                                         }
-
-                                        sleep(Duration::from_millis(16));
+                                        2 => album.lock().unwrap().tracks = vec![Track::fetch(url_ids[1])],
+                                        _ => unreachable!(),
                                     }
-                                );
+                                }
                             }
                         }
                     }
@@ -351,7 +364,7 @@ pub fn display() {
                         .border(0.)
                         .set(ids.export_album_button, ui)
                         .was_clicked() {
-                        if !album_id.is_empty() {
+                        if !album_track_url.starts_with('A') {
                             if let Ok(album) = album.try_lock() { album.save_aria2_input_file(); }
                         }
                     }
@@ -400,7 +413,7 @@ pub fn display() {
                                     track_cover_img = load_track_cover(
                                         &display,
                                         &FETCHER.fetch_to_temp_file(
-                                            &format!("http:{}", track_cover_src),
+                                            &track_cover_src,
                                             temp_dir.path(),
                                         ),
                                     );

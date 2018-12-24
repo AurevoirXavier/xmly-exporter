@@ -1,5 +1,5 @@
 pub mod album;
-mod track;
+pub mod track;
 
 // --- std ---
 use std::{

@@ -32,14 +32,37 @@ impl Track {
             album_title: String::new(),
             nickname: String::new(),
             category: String::new(),
-            cover: json["trackCoverPath"].as_str().unwrap().to_owned(),
-            src: json["src"].as_str().unwrap().to_owned()
+            cover: format!("http://{}", json["trackCoverPath"].as_str().unwrap()),
+            src: json["src"].as_str().unwrap().to_owned(),
+        }
+    }
+
+    pub fn fetch(id: &str) -> Track {
+        let json: serde_json::Value = FETCHER.get(&format!("http://www.ximalaya.com/tracks/{}.json", id))
+            .json()
+            .unwrap();
+
+        Track {
+            id: id.parse().unwrap(),
+            album_id: json["album_id"].as_u64().unwrap(),
+            duration: json["duration"].as_u64().unwrap(),
+            plays: json["play_count"].as_u64().unwrap(),
+            comments: json["comments_count"].as_u64().unwrap(),
+            shares: json["shares_count"].as_u64().unwrap(),
+            likes: json["favorites_count"].as_u64().unwrap(),
+            title: json["title"].as_str().unwrap().to_owned(),
+            album_title: json["album_title"].as_str().unwrap().to_owned(),
+            nickname: json["nickname"].as_str().unwrap().to_owned(),
+            category: json["category_name"].as_str().unwrap().to_owned(),
+            cover: json["cover_url"].as_str().unwrap().to_owned(),
+            src: json["play_path"].as_str().unwrap().to_owned(),
         }
     }
 
     pub fn update(&mut self) {
-        let fetcher = FETCHER.clone();
-        let json: serde_json::Value = fetcher.get(&format!("http://www.ximalaya.com/tracks/{}.json", self.id))
+        if self.album_id != 0 { return; }
+
+        let json: serde_json::Value = FETCHER.get(&format!("http://www.ximalaya.com/tracks/{}.json", self.id))
             .json()
             .unwrap();
 
