@@ -17,7 +17,7 @@
 1. `cargo run --release` or run [xml-exporter/xmly-exporter.exe]
 2. Copy the url (https://www.ximalaya.com/toutiao/4308484/, https://www.ximalaya.com/toutiao/4308484/147135825). Album and Track are supported
 3. **Fetch**: Just click and it will read the url from your clipboard to start fetching
-4. **Export All**: Export all tracks’ detail to a **\*.ax** file which for [aria2](https://aria2.github.io)’s -i flag. Cause some problem with *Async*, download are not supported now.
+4. **Export All**: Export all tracks’ detail to a **\*.ax** file which for [aria2](https://aria2.github.io)’s **-i** flag. Cause some problem with *Async*, download are not supported now.
 5. List select: Click to get the track’s detail as below
 6. Button: Color change when click
    - **Click to copy download link**: Just as it told (also copy the title of the track)
