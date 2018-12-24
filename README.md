@@ -23,3 +23,15 @@
 #### Screenshot
 
 ![screenshot](demo.png)
+
+#### Issue
+
+One of these font(path) are needed.
+
+```rust
+if cfg!(target_os = "windows") {
+    ui.fonts.insert_from_file(Path::new("C:/Windows/Fonts/simsunb.ttf")).unwrap();
+} else {
+    ui.fonts.insert_from_file(Path::new("/Library/Fonts/Arial Unicode.ttf")).unwrap();
+}
+```
