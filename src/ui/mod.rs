@@ -54,7 +54,7 @@ pub fn display() {
         use std::path::Path;
 
         if cfg!(target_os = "windows") {
-            ui.fonts.insert_from_file(Path::new("C:/Windows/Fonts/simsunb.ttf")).unwrap();
+            ui.fonts.insert_from_file(Path::new("C:/Windows/Fonts/SIMFANG.ttf")).unwrap();
         } else {
             ui.fonts.insert_from_file(Path::new("/Library/Fonts/Arial Unicode.ttf")).unwrap();
         };
@@ -142,7 +142,6 @@ pub fn display() {
 
             let ui = &mut ui.set_widgets();
 
-            let widget_width = 80.;
             let widget_height = 30.;
             let margin = 40.;
             let font_size = (widget_height / 2.) as conrod::FontSize;
@@ -291,6 +290,7 @@ pub fn display() {
                 }
 
                 {
+                    let widget_width = 100.;
                     let button_color = color::LIGHT_BLUE;
                     let button_press_color = color::LIGHT_GREY;
                     let label_color = color::BLACK;
