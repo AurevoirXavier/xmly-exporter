@@ -9,7 +9,8 @@
    - `cargo build --release` (rust version 1.33.0 nightly)
 2.  Download relase
    - [OS X Mojave (10.14.2 18C54)](https://github.com/AurevoirXavier/xmly-exporter/releases/download/1.0/xmly-exporter)
-   - [Windows](#) Not yet
+   - [Windows](https://github.com/AurevoirXavier/xmly-exporter/releases/download/1.0/xmly-exporter.exe)
+   - [Linux](#): Not yet
 
 #### Usage
 
@@ -33,7 +34,7 @@ One of these fonts(path) is needed.
 
 ```rust
 if cfg!(target_os = "windows") {
-    ui.fonts.insert_from_file(Path::new("C:/Windows/Fonts/simsunb.ttf")).unwrap();
+    ui.fonts.insert_from_file(Path::new("C:/Windows/Fonts/SIMFANG.ttf")).unwrap();
 } else {
     ui.fonts.insert_from_file(Path::new("/Library/Fonts/Arial Unicode.ttf")).unwrap();
 }
