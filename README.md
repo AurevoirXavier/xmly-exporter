@@ -7,7 +7,7 @@
 1.  Complie from source (recommend)
    - `git clone https://github.com/AurevoirXavier/xmly-exporter.git`
    - `cargo build --release` (rust version 1.33.0 nightly)
-2.  Download relase
+2.  Download release
    - [OS X Mojave (10.14.2 18C54)](https://github.com/AurevoirXavier/xmly-exporter/releases/download/1.0/xmly-exporter)
    - [Windows](https://github.com/AurevoirXavier/xmly-exporter/releases/download/1.0/xmly-exporter.exe)
    - [Linux](#): Not yet
