@@ -2,6 +2,8 @@
 
 **[xmly](https://www.ximalaya.com) crawler in pure Rust**
 
+The goal of this project is learning [conrod](https://github.com/PistonDevelopers/conrod).
+
 #### Installation
 
 1.  Complie from source (recommend)
@@ -20,7 +22,7 @@
 4. **Export All**: Export all tracks’ detail to a **\*.ax** file which for [aria2](https://aria2.github.io)’s **-i** flag. Cause some problem with *Async*, download are not supported now.
 5. List select: Click to get the track’s detail as below
 6. Button: Color change when click
-   - **Click to copy download link**: Just as it told (also copy the title of the track)
+   - **Click to copy download link**: Just as it told (also copy the track’s title)
    - **Track id**, **Album**, **Album id**: Click to copy
 7. Text: **Category**,**Nickname**, **Duration**, **Plays**, **Comments**, **Shares**, **Likes**
 
