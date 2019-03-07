@@ -78,7 +78,7 @@ pub fn display() {
         track_likes_text,
         tracks_list_select,
         track_cover_image,
-    } }
+    }}
     let ids = Ids::new(ui.widget_id_generator());
 
     let mut renderer = conrod::backend::glium::Renderer::new(&display).unwrap();
